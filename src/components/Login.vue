@@ -24,7 +24,10 @@
 	  		store.state.userName = this.userName;
 	  		store.state.token = "123";
 	  		store.state.passWord = this.passWord;
-	  		let redirect = decodeURIComponent(this.$route.query.redirect || '/');
+	  		let redirect = decodeURIComponent(this.$route.query.redirect || '/index');
+	  		if(redirect == ""){
+	  			redirect = "/index";
+	  		}
 	  		this.$router.push({
             	path: redirect
           	});

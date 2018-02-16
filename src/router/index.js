@@ -1,42 +1,59 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/store'
-import HelloWorld from '@/components/HelloWorld'
-import Login from '@/components/Login'
-import Error404 from '@/components/error/404'
-import Index from '@/components/Index'
-import Menu from '@/components/Menu'
+
 Vue.use(Router)
 
 const router = new Router({
   mode:'history',
-  base:__dirname,
+  base: __dirname,
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'welcome',
+      component: resolve => require(["../components/welcome.vue"],resolve)
     },
     {
     	path:'/index',
     	name:'首页',
     	meta:{
+            title:"首页",
     		requireAuth:true
     	},
-    	component:Index
+    	component: resolve => require(["../components/Index.vue"],resolve)
     },
     {
     	path:'/login',
     	name:'登录',
-    	component:Login
+        meta:{
+            title:"登录"
+        },
+    	component:resolve => require(["../components/Login.vue"],resolve)
     },
     {
         path:'/menu',
-        component:Menu
+        component:resolve => require(["../components/Menu.vue"],resolve)
+    },
+    {
+        path:'/goods',
+        meta:{
+            title:"商品列表"
+        },
+        component:resolve => require(["../yuyepage/Goods.vue"],resolve)
+    },
+    {
+        path:"/goodDetail",
+        meta:{
+            title:"商品详情"
+        },
+        component:resolve => require(["../yuyepage/GoodDetail.vue"],resolve)
     },
     {
     	path:'*',
-    	component:Error404
+        meta:{
+            title:"错误页面"
+        },
+    	component:resolve => require(["../components/error/404.vue"],resolve)
     }
   ]
 });
@@ -44,6 +61,11 @@ const router = new Router({
 export default router;
 
 router.beforeEach((to, from, next) => {
+    if(store.state.filterPath.has(to.path)){
+        store.state.hide_tabbar = true;
+    }else{
+        store.state.hide_tabbar = false;
+    }
     if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
         if (store.state.token) {  // 通过vuex state获取当前的token是否存在
             next();
